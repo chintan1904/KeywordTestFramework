@@ -1,7 +1,7 @@
 package config;
 
 import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.open;
+import static com.codeborne.selenide.Selenide.*;
 import static exeuctionEngine.DriverScript.test;
 
 import com.codeborne.selenide.Configuration;
@@ -38,6 +38,26 @@ public class ActionKeywords {
 		
 		logMessage("Perform wait operation for 5 Seconds");
 		Thread.sleep(5000);
+	}
+	
+	public static void select_option_matching_value(String pageObject, String data) {
+		logMessage("Select drop down value \"" + data+ "\" in field \"" + pageObject + "\"");
+		$(Locator.findElement(pageObject)).selectOptionByValue(data);
+	}
+	
+	public static void select_option_matching_text(String pageObject, String data) {
+		logMessage("Select drop down value \"" + data+ "\" in field \"" + pageObject + "\"");
+		$(Locator.findElement(pageObject)).selectOptionContainingText(data);
+	}
+	
+	public static void switchTo_innerFrame(String pageObject, String data) {
+		logMessage("Switch to IFrame " + pageObject);
+		switchTo().frame($(Locator.findElement(pageObject)));
+	}
+	
+	public static void switchTo_defaultFrame(String pageObject, String data) {
+		logMessage("Switch to Default context");
+		switchTo().defaultContent();
 	}
 
 	private static void logMessage(String message) {

@@ -1,9 +1,7 @@
 package exeuctionEngine;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.lang.reflect.Method;
-import java.util.Properties;
 
 import org.apache.log4j.xml.DOMConfigurator;
 
@@ -100,8 +98,6 @@ public class DriverScript {
 
 	public void execute_tests() {
 
-		
-		
 		int iTotalTestCases = ExcelUtils.getRowCount(Constants.TEST_CASES_SHEET);
 		for (int iTestCase = 1; iTestCase < iTotalTestCases; iTestCase++) {
 			bResult = true;
@@ -119,49 +115,24 @@ public class DriverScript {
 				Log.startTestCase(testCaseId);
 				bResult = true;
 				for (iTestStep = iTestStepsStart; iTestStep < iTestStepsEnd; iTestStep++) {
-					sPageObject = ExcelUtils.getCellData(iTestStep, Constants.COL_LOCATOR, Constants.TEST_STEPS_SHEET);
-					testStepData = ExcelUtils.getCellData(iTestStep, Constants.COL_TESTSTEP_DATA,
-							Constants.TEST_STEPS_SHEET);
-					sActionKeyword = ExcelUtils.getCellData(iTestStep, Constants.COL_ACTIONKEYWORD,
-							Constants.TEST_STEPS_SHEET);
-					executeAction();
+					TestSteps.executeStep(iTestStep);
 					if (!bResult) {
 						break;
 					}
 				}
 				if (bResult) {
 					test.log(LogStatus.PASS, "Test Passed");
-					//ExcelUtils.setCellData(Constants.TEST_CASES_SHEET, iTestCase, Constants.COL_TESTCASE_RESULT, Constants.KEYWORD_PASS);
 				} else {
-					//ExcelUtils.setCellData(Constants.TEST_CASES_SHEET, iTestCase, Constants.COL_TESTCASE_RESULT, Constants.KEYWORD_FAIL);
 					Log.error("Exception Desc --- " + failMessage);
 					test.log(LogStatus.FAIL, failMessage);
 				}
 			} else {
 				test.log(LogStatus.SKIP, "Test Runmode set to NO");
-				//ExcelUtils.setCellData(Constants.TEST_CASES_SHEET, iTestCase, Constants.COL_TESTCASE_RESULT, Constants.KEYWORD_SKIP);
 			}
 			Log.endTestCase(testCaseId);
 			extent.endTest(test);
 		}
 		extent.flush();
 		extent.close();
-	}
-
-	public static void executeAction() {
-
-		for (int i = 0; i < methods.length; i++) {
-			if (methods[i].getName().equalsIgnoreCase(sActionKeyword)) {
-				try {
-					methods[i].invoke(actionKeywords, sPageObject, testStepData);
-					//ExcelUtils.setCellData(Constants.TEST_STEPS_SHEET, iTestStep, Constants.COL_TESTSTEP_RESULT, Constants.KEYWORD_PASS);
-				} catch (Exception e) {
-					failMessage = e.getCause().getMessage();
-					Log.error("Class DriverScript | Method " + methods[i].getName() + " | PageObject " + sPageObject + " | TestData " + testStepData);
-					//ExcelUtils.setCellData(Constants.TEST_STEPS_SHEET, iTestStep, Constants.COL_TESTSTEP_RESULT, Constants.KEYWORD_FAIL);
-					bResult = false;
-				}
-			}
-		}
 	}
 }
