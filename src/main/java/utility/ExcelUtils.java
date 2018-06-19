@@ -54,12 +54,12 @@ public class ExcelUtils {
 		}
 	}
 
-	public static int getRowContains(String sheet, int column, String testCaseId) {
+	public static int getRowContains(String sheet, int column, String searchText) {
 		int i;
 		try {
 			int rowCount = getRowCount(sheet);
 			for (i = 0; i < rowCount; i++) {
-				if (testCaseId.equalsIgnoreCase(getCellData(i, column, sheet)))
+				if (searchText.equalsIgnoreCase(getCellData(i, column, sheet)))
 					break;
 			}
 			return i;

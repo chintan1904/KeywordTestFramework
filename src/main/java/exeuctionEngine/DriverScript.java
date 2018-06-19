@@ -7,6 +7,7 @@ import java.util.Properties;
 
 import org.apache.log4j.xml.DOMConfigurator;
 
+import com.codeborne.selenide.Configuration;
 import com.relevantcodes.extentreports.ExtentReports;
 import com.relevantcodes.extentreports.ExtentTest;
 import com.relevantcodes.extentreports.LogStatus;
@@ -22,7 +23,6 @@ public class DriverScript {
 	public static String sActionKeyword;
 	public static String sPageObject;
 	public static Method methods[];
-	public static Properties OR;
 	public static boolean bResult;
 	public static int iTestStep;
 	public static String testStepData;
@@ -38,6 +38,7 @@ public class DriverScript {
 			setActionKeyword();
 			setReportConfiguration();
 			setTestSuiteExcelFile();
+			setBrowser();
 		} catch (Exception e) {
 			Log.error("Class DriverScript | Method DriverScript | Exception Desc --- " + e.getMessage());
 		}
@@ -56,9 +57,6 @@ public class DriverScript {
 
 		try {
 			DOMConfigurator.configure("log4j.xml");
-			FileInputStream fs = new FileInputStream(Constants.OR_PATH);
-			OR = new Properties(System.getProperties());
-			OR.load(fs);
 		} catch (Exception e) {
 			Log.error("Class DriverScript | Method LoadPropertiesFile | Exception Desc --- " + e.getMessage());
 		}
@@ -86,9 +84,24 @@ public class DriverScript {
 		DriverScript startEngine = new DriverScript();
 		startEngine.execute_tests();
 	}
+	
+	private void setBrowser() {
+		
+		try {
+			String browser = ExcelUtils.getCellData(Constants.ROW_BROWSER, Constants.COL_BROWER, Constants.TEST_SUMMARY_SHEET);
+			if("chrome".equalsIgnoreCase(browser))
+				Configuration.browser = "org.openqa.selenium.chrome.ChromeDriver";
+			else if("ie".equalsIgnoreCase(browser))
+				Configuration.browser = "org.openqa.selenium.ie.InternetExplorerDriver";
+		} catch(Exception e) {
+			Log.error("Class DriverScript | Method setBrowser | Exception Desc --- "+e.getMessage());
+		}
+	}
 
 	public void execute_tests() {
 
+		
+		
 		int iTotalTestCases = ExcelUtils.getRowCount(Constants.TEST_CASES_SHEET);
 		for (int iTestCase = 1; iTestCase < iTotalTestCases; iTestCase++) {
 			bResult = true;

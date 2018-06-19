@@ -1,18 +1,14 @@
 package config;
 
-import static com.codeborne.selenide.Selectors.byName;
-import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
-import static exeuctionEngine.DriverScript.OR;
-
-import org.openqa.selenium.By;
+import static exeuctionEngine.DriverScript.test;
 
 import com.codeborne.selenide.Configuration;
 import com.relevantcodes.extentreports.LogStatus;
 
+import exeuctionEngine.Locator;
 import utility.Log;
-import static exeuctionEngine.DriverScript.test;
 public class ActionKeywords {
 
 	public ActionKeywords() {
@@ -29,13 +25,13 @@ public class ActionKeywords {
 	public static void enter_text(String pageObject, String data) {
 		
 		logMessage("Enter value \"" + data + "\" in field \"" + pageObject + "\"");
-		$(locator(pageObject)).setValue(data);
+		$(Locator.findElement(pageObject)).setValue(data);
 	}
 
 	public static void click(String pageObject, String data) {
 		
 		logMessage("Click Element \"" + pageObject + "\"");
-		$(locator(pageObject)).click();
+		$(Locator.findElement(pageObject)).click();
 	}
 
 	public static void waitFor(String pageObject, String data) throws InterruptedException {
@@ -44,21 +40,6 @@ public class ActionKeywords {
 		Thread.sleep(5000);
 	}
 
-	private static By locator(String sPageObject) {
-
-		String locator = OR.getProperty(sPageObject);
-		String[] s = locator.split("::");
-		String locateBy = s[0].trim();
-		String locateValue = s[1].trim();
-
-		if ("byText".equalsIgnoreCase(locateBy)) {
-			return byText(locateValue);
-		} else if ("byName".equalsIgnoreCase(locateBy)) {
-			return byName(locateValue);
-		}
-		return null;
-	}
-	
 	private static void logMessage(String message) {
 		Log.info(message);
 		test.log(LogStatus.INFO, message);
